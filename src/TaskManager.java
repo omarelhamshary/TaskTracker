@@ -30,7 +30,8 @@ public class TaskManager {
         File file = new File(filePath);
         try {
             List<Task> tasks = readTasks();
-            Task newTask = new Task(taskDescription);
+            int newId = tasks.isEmpty() ? 1 : tasks.get(tasks.size()-1).getId() + 1;
+            Task newTask = new Task(newId, taskDescription);
             tasks.add(newTask);
             FileWriter fileWriter = new FileWriter(file);
             fileWriter.write("[");
@@ -49,10 +50,40 @@ public class TaskManager {
         }
 
     }
+    private void saveTasks(List<Task> tasks) {
+        try (FileWriter fileWriter = new FileWriter(filePath)) {  // ✅ Open tasks.json for writing
+            fileWriter.write("[\n");  // ✅ Start JSON array
+            for (int i = 0; i < tasks.size(); i++) {
+                fileWriter.write(tasks.get(i).toString());  // ✅ Convert Task to JSON
+                if (i < tasks.size() - 1) {
+                    fileWriter.write(",\n");  // ✅ Add comma between objects
+                }
+            }
+            fileWriter.write("\n]");  // ✅ Close JSON array
+            fileWriter.close();
+        } catch (IOException e) {
+            System.out.println("❌ Error saving tasks: " + e.getMessage());
+        }
+    }
 
-    public void UpdateTaskStatus(Task task, TaskStatus newStatus) {
-        task.setStatus(newStatus);
-        task.setModifiedAt(LocalDateTime.now());
+    public void UpdateTaskStatus(int taskId, TaskStatus newStatus) throws IOException {
+        List<Task> tasks = readTasks();
+        boolean taskFound = false;
+
+        for (Task task : tasks) {
+            if (task.getId() == taskId) {
+                task.setStatus(newStatus);
+                task.setModifiedAt(LocalDateTime.now());
+                taskFound = true;
+                break;
+            }
+        }
+
+        if (taskFound) {
+            saveTasks(tasks);  // ✅ Save updates to `tasks.json`
+        } else {
+            System.out.println("❌ Task not found!");
+        }
     }
 
     public List<Task> readTasks() throws IOException {

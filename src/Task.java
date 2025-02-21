@@ -22,6 +22,14 @@ public class Task {
         this.status = TaskStatus.todo;
     }
 
+    public Task(int id, String description) {
+        this.id = id;
+        this.description = description;
+        this.createdAt = LocalDateTime.now();
+        this.modifiedAt = LocalDateTime.now();
+        this.status = TaskStatus.todo;
+    }
+
     public int getId() {
         return id;
     }
@@ -60,5 +68,16 @@ public class Task {
 
     public void setStatus(TaskStatus status) {
         this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                ", createdAt=" + createdAt +
+                ", modifiedAt=" + modifiedAt +
+                ", status=" + status +
+                '}';
     }
 }

@@ -123,4 +123,19 @@ public class TaskManager {
         return tasks;
     }
 
+    // Deleting tasks
+    public void deleteTasks(int taskId) throws IOException {
+        List<Task> tasks = readTasks();
+        boolean taskFound = false;
+        for (Task task : tasks) {
+            if (task.getId() == taskId) {
+                tasks.remove(task);
+                saveTasks(tasks);
+                taskFound = true;
+                System.out.println("Task deleted: " + taskId);
+            }
+        }
+        System.out.println("Task not found: " + taskId);
+    }
+
 }
